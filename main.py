@@ -21,6 +21,7 @@ class PlayerPaddle(Paddle):
         self.paddle_rect.center = (20, 250)
 
     def movement(self):
+        global keys
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w] and self.paddle_rect.top > 0:
             self.paddle_rect.y -= 3
@@ -40,7 +41,7 @@ class Ball:
         self.ball_rect = pygame.Rect(0,0,10,10)
         self.ball_rect.center = (400, 250)
         self.velocity_x = 6
-        self.velocity_y = randint(0,3)
+        self.velocity_y = randint(-2,2)
 
     def update(self):
         pygame.draw.rect(screen, "Black", self.ball_rect)
@@ -50,12 +51,14 @@ class Ball:
     def collision(self, paddle_rect, paddle_rect_2):
         if self.ball_rect.left < 30:
             if self.ball_rect.colliderect(paddle_rect):
+                if keys[pygame.K_w]:
+                    self.velocity_y += 3
+                if keys[pygame.K_s]:
+                    self.velocity_y -= 3
                 self.velocity_x = -self.velocity_x
-                self.velocity_y = -self.velocity_y
-        if self.ball_rect.right > 470:
+        if self.ball_rect.right > 490:
             if self.ball_rect.colliderect(paddle_rect_2):
                 self.velocity_x = -self.velocity_x
-                self.velocity_y = -self.velocity_y
         if self.ball_rect.top < 0 or self.ball_rect.bottom > 500:
             self.velocity_y = -self.velocity_y
 
