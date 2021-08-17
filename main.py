@@ -33,8 +33,17 @@ class ComputerPaddle(Paddle):
         super().__init__()
         self.paddle_rect.center = (780, 250)
 
-    def movement(self):
-        pass
+    def movement(self, ball_center,ball_velocity_x, ball_velocity_y):
+        if self.paddle_rect.centery != ball_center[1] and ball_velocity_x < 0:
+            if ball_velocity_y >= 0 and self.paddle_rect.top >= 0 and ball_center[1] < self.paddle_rect.centery:
+                self.paddle_rect.y -= 3
+            elif ball_velocity_y <= 0 and self.paddle_rect.bottom <= 500 and ball_center[1] > self.paddle_rect.centery:
+                self.paddle_rect.y += 3
+
+    def update(self, ball_center,ball_velocity_x, ball_velocity_y):
+        pygame.draw.rect(screen, "Black", self.paddle_rect)
+        self.movement(ball_center,ball_velocity_x, ball_velocity_y)
+        pygame.draw.rect(screen, "White", self.paddle_rect)
 
 class Ball:
     def __init__(self):
@@ -70,10 +79,12 @@ class Ball:
         if self.ball_rect.right <= -20:
             self.ball_rect.center = (400, 250)
             self.velocity_y = randint(0,3)
+            self.velocity_x = -self.velocity_x
             return [0,1]
         if self.ball_rect.left >= 820:
             self.ball_rect.center = (400, 250)
             self.velocity_y = randint(0,3)
+            self.velocity_x = -self.velocity_x
             return [1,0]
         else: return []
 
@@ -90,7 +101,7 @@ ball = Ball()
 
 while True:
     player_paddle.update()
-    computer_paddle.update()
+    computer_paddle.update(ball.ball_rect.center,ball.velocity_x, ball.velocity_y)
     ball.collision(player_paddle.paddle_rect, computer_paddle.paddle_rect)
     ball.update()
     return_list = ball.score_and_reset()
